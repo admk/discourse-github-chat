@@ -1,7 +1,7 @@
 {
   "about": {
     "version": "0.1.0",
-    "url": "https://github.com/discourse/discourse-github-chat"
+    "url": "https://github.com/admk/discourse-github-chat"
   },
   "tests": {
     "requiredPlugins": ["chat"]

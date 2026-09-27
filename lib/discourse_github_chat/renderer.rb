@@ -35,13 +35,15 @@ module DiscourseGithubChat
       head_commit = hash(payload["head_commit"])
       original_commit_count = payload["commit_count"].to_s.to_i
       original_commit_count = commits.length if original_commit_count <= 0
+      original_commit_count = 1 if original_commit_count <= 0 && !head_commit.empty?
       total = positive_integer(payload["size"], original_commit_count)
       total = original_commit_count if total <= 0
       total = [total, commits.length].max if commits.length > total
       shown = commits.first(max_commits)
 
+      heading = release_ref?(ref) ? "GitHub release" : "GitHub push"
       lines = [
-        "**GitHub push** — [#{repository_name}](#{repository_url})",
+        "**#{heading}** — [#{repository_name}](#{repository_url})",
         "#{total} new commit#{total == 1 ? "" : "s"} on `#{branch}`",
       ]
 
@@ -144,6 +146,14 @@ module DiscourseGithubChat
       escaped.gsub!("@") { "\\@" }
       escaped.gsub!("`") { "\\`" }
       escaped
+    end
+
+    def release_ref?(ref)
+      value = ref.to_s
+      return true if value.start_with?("refs/tags/")
+
+      branch = value.sub(%r{\Arefs/heads/}, "")
+      branch.start_with?("release-", "release/", "releases/")
     end
 
     def commit_web_url(value, sha, repository_url)

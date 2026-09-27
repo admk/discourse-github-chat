@@ -63,6 +63,27 @@ RSpec.describe DiscourseGithubChat::Renderer do
       expect(body).to include("1 more commit")
     end
 
+    it "renders a release ref with its head commit instead of zero commits" do
+      body = described_class.render_push_event(
+        {
+          "repository" => { "full_name" => "acme/widgets", "html_url" => "https://github.com/acme/widgets" },
+          "ref" => "refs/heads/release-00699708e1c9fb25261f700e43b79991179447a8",
+          "size" => 0,
+          "commits" => [],
+          "head_commit" => {
+            "id" => "0069970abcdef",
+            "url" => "https://api.github.com/repos/acme/widgets/commits/0069970abcdef",
+            "message" => "Prepare release",
+          },
+        },
+        max_commits: 10,
+      )
+
+      expect(body).to include("**GitHub release**")
+      expect(body).to include("1 new commit")
+      expect(body).to include("Prepare release")
+    end
+
     it "does not render deleted branch pushes as commits" do
       body = described_class.render_push_event(
         {

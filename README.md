@@ -38,6 +38,8 @@ applied.
 
 - Issue notifications for `opened`, `closed`, and `reopened` actions.
 - One Chat summary per repository push, with a configurable commit limit.
+- Tag and `release-*`/`release/*` refs are labeled as releases and correctly
+  count a populated `head_commit` even when GitHub sends an empty commit list.
 - Public category channels by default.
 - Restricted category channels and invited private channels when the bot is a
   member.

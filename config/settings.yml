@@ -1,0 +1,47 @@
+discourse_github_chat:
+  discourse_github_chat_enabled:
+    default: false
+  discourse_github_chat_github_app_id:
+    default: ""
+    type: integer
+  discourse_github_chat_github_private_key:
+    default: ""
+    secret: true
+    textarea: true
+  discourse_github_chat_github_webhook_secret:
+    default: ""
+    secret: true
+  discourse_github_chat_github_installation_id:
+    default: ""
+    type: integer
+  discourse_github_chat_github_allowed_installation_ids:
+    default: ""
+    type: list
+  discourse_github_chat_github_api_url:
+    default: https://api.github.com
+  discourse_github_chat_github_app_install_url:
+    default: ""
+  discourse_github_chat_bot_username:
+    default: github
+    type: username
+  discourse_github_chat_allowed_channel_ids:
+    default: ""
+    type: list
+  discourse_github_chat_allow_private_repositories:
+    default: false
+  discourse_github_chat_allow_direct_message_channels:
+    default: false
+  discourse_github_chat_allow_public_channel_join:
+    default: true
+  discourse_github_chat_max_commits_in_summary:
+    default: 10
+    min: 1
+    max: 100
+  discourse_github_chat_command_rate_limit_per_minute:
+    default: 10
+    min: 1
+    max: 100
+  discourse_github_chat_max_delivery_attempts:
+    default: 6
+    min: 1
+    max: 20

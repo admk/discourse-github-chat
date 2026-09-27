@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DISCOURSE_ROOT="${DISCOURSE_ROOT:-/var/www/discourse}"
+PLUGIN_DIR="${DISCOURSE_ROOT}/plugins/discourse-github-chat"
+
+if [[ ! -d "${DISCOURSE_ROOT}" ]]; then
+  echo "Discourse root not found: ${DISCOURSE_ROOT}" >&2
+  echo "Set DISCOURSE_ROOT to the Discourse application directory." >&2
+  exit 1
+fi
+
+if [[ "${SOURCE_DIR}" != "${PLUGIN_DIR}" ]]; then
+  mkdir -p "${PLUGIN_DIR}"
+  cp -a "${SOURCE_DIR}/." "${PLUGIN_DIR}/"
+fi
+
+cd "${DISCOURSE_ROOT}"
+bin/rails db:migrate
+
+echo "Installed discourse-github-chat and ran migrations."
+echo "Enable Chat and discourse_github_chat_enabled, then configure the GitHub App settings."

@@ -1,0 +1,18 @@
+en:
+  site_settings:
+    discourse_github_chat_enabled: "Enable GitHub issue and push notifications in Chat."
+    discourse_github_chat_github_app_id: "GitHub App ID used to authenticate repository lookups."
+    discourse_github_chat_github_private_key: "GitHub App private key in PEM format. This value is secret."
+    discourse_github_chat_github_webhook_secret: "Secret used to verify GitHub webhook signatures."
+    discourse_github_chat_github_installation_id: "Optional GitHub App installation ID. If empty, installations learned from webhooks are used."
+    discourse_github_chat_github_allowed_installation_ids: "Optional allowlist of GitHub App installation IDs."
+    discourse_github_chat_github_api_url: "GitHub API base URL, for example https://api.github.com."
+    discourse_github_chat_github_app_install_url: "Optional URL for the GitHub App installation page. If empty, the plugin derives it from the GitHub App."
+    discourse_github_chat_bot_username: "Discourse username used for GitHub Chat messages. If the user does not exist, the system account is used."
+    discourse_github_chat_allowed_channel_ids: "Optional allowlist of Chat channel IDs. Empty means all public category channels."
+    discourse_github_chat_allow_private_repositories: "Allow private GitHub repository event data to be sent to subscribed channels."
+    discourse_github_chat_allow_direct_message_channels: "Allow /github commands and notifications in direct-message channels."
+    discourse_github_chat_allow_public_channel_join: "Allow the bot to join public category channels before posting."
+    discourse_github_chat_max_commits_in_summary: "Maximum number of commits shown in one push summary."
+    discourse_github_chat_command_rate_limit_per_minute: "Maximum /github commands one member may send in a channel per minute."
+    discourse_github_chat_max_delivery_attempts: "Maximum attempts for a Chat notification delivery."

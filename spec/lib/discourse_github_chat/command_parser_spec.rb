@@ -2,6 +2,19 @@
 
 RSpec.describe DiscourseGithubChat::CommandParser do
   describe ".parse" do
+    it "parses the bare slash command as help" do
+      result = described_class.parse("/github")
+
+      expect(result).to be_help
+      expect(result.command.action).to eq("help")
+    end
+
+    it "parses the explicit help command" do
+      result = described_class.parse("/github help")
+
+      expect(result).to be_help
+    end
+
     it "parses a slash-only subscribe command" do
       result = described_class.parse("/github subscribe acme/widgets")
 
@@ -29,7 +42,7 @@ RSpec.describe DiscourseGithubChat::CommandParser do
 
     it "marks malformed command messages for a usage response" do
       [
-        "/github",
+        "/github help extra",
         "/github subscribe",
         "/github subscribe acme",
         "/github subscribe acme/widgets/extra",

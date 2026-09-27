@@ -14,6 +14,10 @@ module DiscourseGithubChat
         !command.nil? || invalid
       end
 
+      def help?
+        command&.action == "help"
+      end
+
       def invalid?
         invalid
       end
@@ -27,6 +31,8 @@ module DiscourseGithubChat
       text = raw.to_s
       return Result.new(command: nil, invalid: false) unless text.match?(/\A\/github(?:[ \t]|\z)/)
 
+      return help_result if text.match?(/\A\/github[ \t]*\z/) || text.match?(/\A\/github[ \t]+help[ \t]*\z/)
+
       match = text.match(/\A\/github[ \t]+(subscribe|unsubscribe)[ \t]+([^ \t\r\n]+)[ \t]*\z/)
       return Result.new(command: nil, invalid: true) unless match
 
@@ -35,6 +41,13 @@ module DiscourseGithubChat
 
       Result.new(
         command: Command.new(action: match[1], repository_full_name: full_name),
+        invalid: false,
+      )
+    end
+
+    def help_result
+      Result.new(
+        command: Command.new(action: "help"),
         invalid: false,
       )
     end

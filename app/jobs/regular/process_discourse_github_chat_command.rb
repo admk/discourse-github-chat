@@ -40,6 +40,11 @@ module Jobs
         return
       end
 
+      if parsed.help?
+        respond(channel.id, response_key, DiscourseGithubChat::Renderer.render_help_response)
+        return
+      end
+
       if parsed.invalid || parsed.command.nil?
         respond(channel.id, response_key, DiscourseGithubChat::Renderer.render_usage_response)
         return

@@ -11,7 +11,10 @@ Commands are slash-only. A bot mention is **not** required:
 ```text
 /github subscribe owner/repository
 /github unsubscribe owner/repository
+/github help
 ```
+
+Use `/github` on its own as a shorthand for `/github help`.
 
 The value is a GitHub `owner/repository` name, such as `acme/widgets`. The
 plugin resolves that name through the GitHub App installation and verifies that

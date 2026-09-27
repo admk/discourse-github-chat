@@ -91,9 +91,20 @@ RSpec.describe DiscourseGithubChat::Renderer do
     end
   end
 
+  describe ".render_help_response" do
+    it "lists the supported slash commands" do
+      body = described_class.render_help_response
+
+      expect(body).to include("/github subscribe <owner>/<repo>")
+      expect(body).to include("/github unsubscribe <owner>/<repo>")
+      expect(body).to include("/github help")
+    end
+  end
+
   describe ".render_usage_response" do
     it "documents slash-only commands" do
       expect(described_class.render_usage_response).to include("/github subscribe <owner>/<repo>")
+      expect(described_class.render_usage_response).to include("/github help")
       expect(described_class.render_usage_response).not_to include("@github")
       expect(described_class.render_usage_response).not_to include("github_repo_id")
     end

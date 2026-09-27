@@ -18,7 +18,7 @@ RSpec.describe Jobs::ProcessDiscourseGithubChatCommand do
         use_service: true,
         chat_channel: channel,
         user: user,
-        message: "/github",
+        message: "/github help extra",
       )
 
     described_class.new.execute(chat_message_id: message.id)
@@ -26,6 +26,23 @@ RSpec.describe Jobs::ProcessDiscourseGithubChatCommand do
     response = channel.chat_messages.where("message LIKE ?", "Usage: `/github%").last
     expect(response).to be_present
     expect(response.user).to eq(Discourse.system_user)
+  end
+
+  it "responds to /github and /github help with the command list" do
+    message =
+      Fabricate(
+        :chat_message,
+        use_service: true,
+        chat_channel: channel,
+        user: user,
+        message: "/github",
+      )
+
+    described_class.new.execute(chat_message_id: message.id)
+
+    response = channel.chat_messages.where("message LIKE ?", "**GitHub Chat commands**%").last
+    expect(response).to be_present
+    expect(response.message).to include("/github subscribe <owner>/<repo>")
   end
 
   it "does not process a command that still has a bot mention" do

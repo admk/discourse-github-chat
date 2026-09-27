@@ -99,8 +99,18 @@ module DiscourseGithubChat
         "Then send `/github subscribe <owner>/<repo>` again."
     end
 
+    def render_help_response
+      [
+        "**GitHub Chat commands**",
+        "- `/github subscribe <owner>/<repo>` — subscribe this channel to a repository",
+        "- `/github unsubscribe <owner>/<repo>` — unsubscribe this channel from a repository",
+        "- `/github help` — show this help message",
+      ].join("\n")
+    end
+
     def render_usage_response
-      "Usage: `/github subscribe <owner>/<repo>` or `/github unsubscribe <owner>/<repo>`."
+      "Usage: `/github subscribe <owner>/<repo>`, `/github unsubscribe <owner>/<repo>`, " \
+        "or `/github help`."
     end
 
     def repository(payload)

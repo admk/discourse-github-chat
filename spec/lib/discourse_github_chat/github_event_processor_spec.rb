@@ -123,6 +123,42 @@ RSpec.describe DiscourseGithubChat::GithubEventProcessor do
     expect(notification.body).to include("https://github.com/acme/widgets/commit/abc123")
   end
 
+  it "creates a release notification linked to the release page" do
+    payload = {
+      "repository" => {
+        "id" => 42,
+        "full_name" => "acme/widgets",
+        "html_url" => "https://github.com/acme/widgets",
+        "private" => false,
+      },
+      "action" => "published",
+      "release" => {
+        "id" => 900,
+        "tag_name" => "v1.2.3",
+        "name" => "Version 1.2.3",
+        "html_url" => "https://github.com/acme/widgets/releases/tag/v1.2.3",
+        "draft" => false,
+        "prerelease" => false,
+      },
+    }
+    delivery = create_delivery(
+      payload,
+      delivery_id: "processor-release",
+      event_key: "release:42:900",
+      event_type: "release",
+    )
+
+    expect { described_class.call(delivery.id) }.to change(
+      DiscourseGithubChat::GithubNotification,
+      :count,
+    ).by(1)
+
+    notification = DiscourseGithubChat::GithubNotification.last
+    expect(notification.body).to include("GitHub release published")
+    expect(notification.body).to include("https://github.com/acme/widgets/releases/tag/v1.2.3")
+    expect(notification.body).not_to include("/commit/")
+  end
+
   it "does not expose private repository events by default" do
     payload = issue_payload.deep_merge("repository" => { "private" => true })
     delivery = create_delivery(

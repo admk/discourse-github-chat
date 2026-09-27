@@ -40,6 +40,28 @@ RSpec.describe DiscourseGithubChat::Renderer do
     end
   end
 
+  describe ".render_release_event" do
+    it "links to the release page instead of a commit" do
+      body = described_class.render_release_event(
+        {
+          "repository" => { "full_name" => "acme/widgets", "html_url" => "https://github.com/acme/widgets" },
+          "action" => "published",
+          "release" => {
+            "tag_name" => "v1.2.3",
+            "name" => "Version 1.2.3",
+            "html_url" => "https://github.com/acme/widgets/releases/tag/v1.2.3",
+            "draft" => false,
+          },
+        },
+      )
+
+      expect(body).to include("GitHub release published")
+      expect(body).to include("https://github.com/acme/widgets/releases/tag/v1.2.3")
+      expect(body).to include("Version 1.2.3")
+      expect(body).not_to include("/commit/")
+    end
+  end
+
   describe ".render_push_event" do
     it "renders one summary and caps the displayed commits" do
       body = described_class.render_push_event(

@@ -5,6 +5,7 @@ require "digest"
 module DiscourseGithubChat
   class GithubEventProcessor
     ISSUE_ACTIONS = %w[opened closed reopened].freeze
+    RELEASE_ACTIONS = %w[published released prereleased].freeze
 
     def self.call(github_delivery_id)
       new(github_delivery_id).call
@@ -116,6 +117,10 @@ module DiscourseGithubChat
           payload,
           max_commits: Configuration.max_commits_in_summary,
         )
+      when "release"
+        return unless RELEASE_ACTIONS.include?(payload["action"].to_s)
+
+        DiscourseGithubChat::Renderer.render_release_event(payload)
       end
     end
 

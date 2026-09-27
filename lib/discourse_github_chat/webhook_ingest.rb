@@ -4,7 +4,7 @@ require "json"
 
 module DiscourseGithubChat
   class WebhookIngest
-    SUPPORTED_EVENTS = %w[issues push].freeze
+    SUPPORTED_EVENTS = %w[issues push release].freeze
 
     Result = Struct.new(
       :queued,
@@ -187,6 +187,10 @@ module DiscourseGithubChat
         ref = scalar(@payload["ref"], 220)
         after = scalar(@payload["after"], 128)
         "push:#{repository_id}:#{ref}:#{after}"
+      when "release"
+        release_id = scalar(nested_hash("release")["id"], 128)
+        tag_name = scalar(nested_hash("release")["tag_name"], 220)
+        "release:#{repository_id}:#{release_id.presence || tag_name}"
       else
         "delivery:#{@delivery_id}"
       end[0, 250]
@@ -217,9 +221,27 @@ module DiscourseGithubChat
         }
       when "push"
         result.merge!(minimized_push_payload)
+      when "release"
+        result["action"] = scalar(@payload["action"], 32)
+        result["release"] = minimized_release
       end
 
       result
+    end
+
+    def minimized_release
+      release = @payload["release"].is_a?(Hash) ? @payload["release"] : {}
+      author = release["author"].is_a?(Hash) ? release["author"] : {}
+      {
+        "id" => positive_integer(release["id"]),
+        "tag_name" => scalar(release["tag_name"], 220),
+        "name" => scalar(release["name"], 255),
+        "html_url" => scalar(release["html_url"], 2_048),
+        "draft" => release["draft"] == true,
+        "prerelease" => release["prerelease"] == true,
+        "target_commitish" => scalar(release["target_commitish"], 255),
+        "author" => { "login" => scalar(author["login"], 255) },
+      }
     end
 
     def minimized_push_payload

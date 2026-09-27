@@ -27,6 +27,28 @@ module DiscourseGithubChat
         "[View issue](#{issue_url})"
     end
 
+    def render_release_event(payload)
+      repository_name, repository_url = repository(payload)
+      release = hash(payload["release"])
+      action = payload["action"].to_s
+      raw_tag_name = text(release["tag_name"], "release")
+      tag_name = markdown(raw_tag_name, "release")
+      release_name = text(release["name"], "")
+      release_url = safe_url(release["html_url"], repository_url)
+      kind =
+        action == "prereleased" || release["prerelease"] == true ? "pre-release" : "release"
+
+      lines = [
+        "**GitHub #{kind} published** — [#{repository_name}](#{repository_url})",
+        "[#{tag_name}](#{release_url})",
+      ]
+      if release_name.present? && release_name != raw_tag_name
+        lines << markdown(release_name)
+      end
+      lines << "_Draft release._" if release["draft"] == true
+      lines.join("\n")
+    end
+
     def render_push_event(payload, max_commits:)
       repository_name, repository_url = repository(payload)
       ref = text(payload["ref"], "")
@@ -41,9 +63,8 @@ module DiscourseGithubChat
       total = [total, commits.length].max if commits.length > total
       shown = commits.first(max_commits)
 
-      heading = release_ref?(ref) ? "GitHub release" : "GitHub push"
       lines = [
-        "**#{heading}** — [#{repository_name}](#{repository_url})",
+        "**GitHub push** — [#{repository_name}](#{repository_url})",
         "#{total} new commit#{total == 1 ? "" : "s"} on `#{branch}`",
       ]
 
@@ -146,14 +167,6 @@ module DiscourseGithubChat
       escaped.gsub!("@") { "\\@" }
       escaped.gsub!("`") { "\\`" }
       escaped
-    end
-
-    def release_ref?(ref)
-      value = ref.to_s
-      return true if value.start_with?("refs/tags/")
-
-      branch = value.sub(%r{\Arefs/heads/}, "")
-      branch.start_with?("release-", "release/", "releases/")
     end
 
     def commit_web_url(value, sha, repository_url)

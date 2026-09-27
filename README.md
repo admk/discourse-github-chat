@@ -38,8 +38,8 @@ applied.
 
 - Issue notifications for `opened`, `closed`, and `reopened` actions.
 - One Chat summary per repository push, with a configurable commit limit.
-- Tag and `release-*`/`release/*` refs are labeled as releases and correctly
-  count a populated `head_commit` even when GitHub sends an empty commit list.
+- GitHub release events render as release messages linking to the release page,
+  not as commit summaries.
 - Public category channels by default.
 - Restricted category channels and invited private channels when the bot is a
   member.
@@ -102,8 +102,8 @@ Create a GitHub App with:
 - **Webhook secret:** the value of
   `discourse_github_chat_github_webhook_secret`
 - **Repository permissions:** Metadata (read), Issues (read), Contents (read)
-- **Subscribe to events:** Issues and Push. Also select Installation and
-  Installation repositories if the installation ID is not configured manually.
+- **Subscribe to events:** Issues, Push, and Releases. Also select Installation
+  and Installation repositories if the installation ID is not configured manually.
 
 Install the App on the organizations or repositories that should be available.
 Set the App ID and PEM private key in the plugin settings. The installation ID
@@ -123,6 +123,9 @@ webhook was not delivered, the plugin can also discover the installation through
 the App API on the first command; setting
 `discourse_github_chat_github_installation_id` explicitly is recommended for
 predictable behavior.
+
+Release notifications come from GitHub's `release` webhook event. The message
+links to `release.html_url` and does not present the release as a commit.
 
 ## Bot setup
 
